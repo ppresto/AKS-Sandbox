@@ -1,0 +1,17 @@
+# Compiled files
+*.tfstate.*
+
+# Module directory
+.terraform/
+
+# Terraform Variables
+#*.tfvars
+
+# SSH Keys
+*.pem
+
+# tmp files
+*.json
+*.hclic
+
+.DS_store
