@@ -4,6 +4,17 @@
 * Azure Subscription 
 
 ## Build AKS Cluster
+Update the aks.auto.tfvars file with your information.  Setup Terraforms required Azure ARM environment variables to connect.
+
+```
+cd ./k8s-azure
+
+terraform init
+
+terraform plan
+
+terraform apply
+```
 
 ## Connect to AKS
 ```
