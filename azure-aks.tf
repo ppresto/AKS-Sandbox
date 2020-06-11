@@ -3,8 +3,7 @@
 #}
 
 resource "azurerm_resource_group" "aks" {
-  name     = "${var.prefix}.${var.MY_RG}"
-  #location = "West Europe"
+  name     = "${var.prefix}-${var.MY_RG}"
   location = var.location
 }
 
@@ -41,10 +40,10 @@ resource "azurerm_subnet_route_table_association" "example" {
 }
 
 resource "azurerm_kubernetes_cluster" "example" {
-  name                = "example-aks1"
+  name                = var.k8s_clustername
   location            = azurerm_resource_group.aks.location
   resource_group_name = azurerm_resource_group.aks.name
-  dns_prefix          = "exampleaks1"
+  dns_prefix          = var.k8s_clustername
 
   linux_profile {
     admin_username = var.ssh_user
