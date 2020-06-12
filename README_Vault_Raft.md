@@ -1,4 +1,4 @@
-# hcs-az-dev
+# k8s-azure (Install Vault)
 
 ## Pre Req
 * Azure Subscription 
@@ -15,7 +15,7 @@ az aks get-credentials --resource-group ${MY_RG} --name ${MY_CN}
 kubectl get pods
 ```
 
-## Install Vault
+## Install Vault with Raft backend (Manual Steps)
 ```
 helm repo add hashicorp https://helm.releases.hashicorp.com
 

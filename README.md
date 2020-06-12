@@ -1,4 +1,4 @@
-# hcs-az-dev
+# k8s-azure
 
 ## Pre Req
 * Azure Subscription 
