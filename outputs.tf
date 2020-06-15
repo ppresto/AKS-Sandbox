@@ -1,9 +1,9 @@
-output "resource_group_id" {
-  value = azurerm_resource_group.aks.id
+output "azurerm_kubernetes_cluster_name" {
+  value = azurerm_kubernetes_cluster.example.name
 }
 
-output "virtual_network_id" {
-  value = azurerm_virtual_network.example.id
+output "resource_group_name" {
+  value = azurerm_resource_group.aks.name
 }
 
 output "client_certificate" {
