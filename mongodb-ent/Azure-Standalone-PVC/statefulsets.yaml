@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb-standalone
+spec:
+  serviceName: database
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+        selector: mongodb-standalone
+    spec:
+      containers:
+      - name: mongodb-standalone
+        #image: mongo:4.0.8
+        image: ppresto/mongo-ent:4.2
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: admin
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: password
+        volumeMounts:
+        - name: mongodb-conf
+          mountPath: /config
+          readOnly: true
+        - name: mongodb-data
+          mountPath: /data/db
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+      - name: mongodb-conf
+        configMap:
+          name: mongodb-standalone
+          items:
+          - key: mongo.conf
+            path: mongo.conf
+      - name: mongodb-data
+        persistentVolumeClaim:
+          claimName: pvc-mongodb-standalone

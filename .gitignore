@@ -5,6 +5,9 @@ terraform.tfstate
 # Module directory
 .terraform/
 
+# repos
+mongo-ent/mongo/
+
 # Terraform Variables
 #*.tfvars
 
