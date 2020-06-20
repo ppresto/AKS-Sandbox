@@ -4,9 +4,11 @@
 * Build AKS Cluster from main repo
 
 ## Connect to your AKS Cluster
+Go to the root of this repo ` cd ..` to get the AKS resource group and cluster name from our terraform outputs.  We will use this to connect to our AKS cluster.
+
 ```
-MY_RG=$(cat ../aks.auto.tfvars  | grep MY_RG | cut -d "=" -f2 | sed "s/\"//g")
-MY_CN=$(cat ../aks.auto.tfvars  | grep k8s_clustername | cut -d "=" -f2 | sed "s/\"//g")
+MY_RG=$(terraform output resource_group_name)
+MY_CN=$(terraform output azurerm_kubernetes_cluster_name)
 
 az login
 az aks get-credentials --resource-group ${MY_RG} --name ${MY_CN}
