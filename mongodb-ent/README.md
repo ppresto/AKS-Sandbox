@@ -1,4 +1,7 @@
-# Build MongoDB Enterprise container and deploy to AKS
+# mongodb Enterprise
+Build the mongodb container based on the mongo docker repo and deploy it to Kubernetes.  This repo is using AKS.
+
+## Build MongoDB Enterprise container 
 We will build an enterprise image using the mongo docker project.  
 
 PreReq:
@@ -38,6 +41,9 @@ docker push ppresto/mongo-ent:4.2
 ```
 
 ## AKS - Create Standalone Mongo DB (No PVC)
+This is the quick start
+
+### Update secrets.yaml with your docker login
 To pull down your docker image you need to allow K8 to login to your docker repo.  To do this locally we are putting a reference to our docker creds into a k8 secret and referencing this in our statefulset.  To create a k8 secret using your docker creds try the following:
 ```
 docker login
@@ -49,6 +55,7 @@ You should see your token or a reference to it.  To create a docker repo secret 
 cat ~/.docker/config.json | base64
 ```
 
+### Deploy you enterprise mongodb image to Kubernetes
 ```
 cd Standalone-Quick-and-Dirty
 kubectl apply -f secrets.yaml
@@ -56,7 +63,7 @@ kubectl apply -f service.yaml
 kubectl apply -f statefulsets.yaml
 ```
 
-### Test mongodb deployment
+#### Test mongodb deployment
 ```
 kubectl exec -it mongodb-standalone-0 sh
 mongo mongodb://mongodb-standalone-0.database:27017
@@ -67,7 +74,7 @@ show collections
 db.users.find()
 ```
 
-## AKS - Create Azure-Standalone-PVC
+### AKS - Create Azure-Standalone-PVC
 Configure a custom storageclass and create a PVC using it.  then deploy a statefulset leveraging this PVC in Azure.
 
 ```
