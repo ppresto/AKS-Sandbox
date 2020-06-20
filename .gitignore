@@ -6,7 +6,7 @@ terraform.tfstate
 .terraform/
 
 # repos
-mongo-ent/mongo/
+mongodb-ent/mongo/
 
 # Terraform Variables
 #*.tfvars

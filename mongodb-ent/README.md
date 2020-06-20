@@ -1,7 +1,12 @@
-# Build MongoDB Enterprise container
-Build Image using the existing mongo docker project
+# Build MongoDB Enterprise container and deploy to AKS
+We will build an enterprise image using the mongo docker project.  
+
+PreReq:
+* Sign up for your own free docker account.
+* Create your AKS cluster
 
 ## Download mongo docker repo and build image
+When you build your image use your docker login (ex: ppresto).  This will be required when you try to upload your image.
 ```
 git clone https://github.com/docker-library/mongo.git
 cd mongo/<version>
@@ -25,16 +30,28 @@ docker logs mongo | grep enterprise
 ```
 
 ## Push imge to docker repo
+Be sure your image name starts with your docker login name (ex: ppresto)
 ```
 docker login
 docker images
 docker push ppresto/mongo-ent:4.2
 ```
 
-## K8 - Create Standalone Mongo DB (No PVC)
+## AKS - Create Standalone Mongo DB (No PVC)
+To pull down your docker image you need to allow K8 to login to your docker repo.  To do this locally we are putting a reference to our docker creds into a k8 secret and referencing this in our statefulset.  To create a k8 secret using your docker creds try the following:
+```
+docker login
+cat ~/.docker/config.json
+``` 
+
+You should see your token or a reference to it.  To create a docker repo secret you need to base64 encode the json file config.json and put this value in ./secrets.yaml
+```
+cat ~/.docker/config.json | base64
+```
+
 ```
 cd Standalone-Quick-and-Dirty
-kubectl apply -f secret_regcred.yaml
+kubectl apply -f secrets.yaml
 kubectl apply -f service.yaml
 kubectl apply -f statefulsets.yaml
 ```
