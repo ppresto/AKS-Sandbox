@@ -16,6 +16,7 @@ kubectl get pods
 ```
 
 ## Install Vault with Raft backend (Manual Steps)
+Lets jump back into this folder to keep things clean.  `cd vault-raft`
 ```
 helm repo add hashicorp https://helm.releases.hashicorp.com
 
@@ -25,6 +26,8 @@ helm install vault hashicorp/vault \
   --set='server.ha.enabled=true' \
   --set='server.ha.raft.enabled=true'
 
+helm status vault
+kubectl get pods
 kubectl exec vault-0 -- vault status
 ```
 ### Initialize & Unseal Vault Master
@@ -41,9 +44,14 @@ kubectl exec vault-0 -- vault operator unseal $VAULT_UNSEAL_KEY
 ```
 kubectl exec -ti vault-1 -- vault operator raft join http://vault-0.vault-internal:8200
 kubectl exec -ti vault-1 -- vault operator unseal $VAULT_UNSEAL_KEY
+kubectl exec -ti vault-1 -- vault status
+
 
 kubectl exec -ti vault-2 -- vault operator raft join http://vault-0.vault-internal:8200
 kubectl exec -ti vault-2 -- vault operator unseal $VAULT_UNSEAL_KEY
+kubectl exec -ti vault-2 -- vault status
+
+
 kubectl get pods
 ```
 
@@ -62,7 +70,7 @@ kubectl port-forward vault-0 8200:8200
 ```
 In a new terminal window source necessary environment info for vault.  Create the vault license key json payload.
 
-vault-ent.lic
+vault-ent.hclic
 ```
 {
   "text": "01ABCDEFG..."
@@ -74,7 +82,7 @@ Using the Vault API from your machine (port-forward tunnel) input YOUR_TOKEN and
 curl \
   --header "X-Vault-Token: ${VAULT_TOKEN}" \
   --request PUT \
-  --data @vault-ent.lic \
+  --data @vault-ent.hclic \
   http://127.0.0.1:8200/v1/sys/license
 ```
 
