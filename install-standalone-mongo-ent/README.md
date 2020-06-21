@@ -1,5 +1,5 @@
 # mongodb Enterprise
-Build the mongodb container based on the mongo docker repo and deploy it to Kubernetes.  This repo is using AKS.
+Build the mongodb container based on the mongo docker repo.  Deploy it to Kubernetes using a Persistent Volume Claim (PVC).  
 
 ## Build MongoDB Enterprise container 
 We will build an enterprise image using the mongo docker project.  
@@ -40,38 +40,28 @@ docker images
 docker push ppresto/mongo-ent:4.2
 ```
 
-## AKS - Create Standalone Mongo DB (No PVC)
-This is the quick start
+## AKS - Create Standalone Mongo DB (with PVC)
+Go to standalone-withPVC directory to review AKS resources:
+```
+cd standalone-withPVC
+```
+* configmap.yaml - used to mount the mongodb data volume
+* storageclass.yaml - custom class for mongo
+* secrets.yaml - docker auth to deploy custom mongo-ent image
+* persistent-volume-claim.yaml - mongo storage volume
+* statefulsets.yaml - deploy standalone mongodb instance
+* service.yaml - expose the db service so we can connect
 
-### Update secrets.yaml with your docker login
+### Update secrets.yaml with your docker auth secret
 To pull down your docker image you need to allow K8 to login to your docker repo.  To do this locally we are putting a reference to our docker creds into a k8 secret and referencing this in our statefulset.  To create a k8 secret using your docker creds try the following:
 ```
 docker login
 cat ~/.docker/config.json
 ``` 
 
-You should see your token or a reference to it.  To create a docker repo secret you need to base64 encode the json file config.json and put this value in ./secrets.yaml
+You should see your token or a reference to it.  To create a docker repo secret you need to base64 encode the json file config.json and put this value in **./secrets.yaml**
 ```
 cat ~/.docker/config.json | base64
-```
-
-### Deploy you enterprise mongodb image to Kubernetes
-```
-cd Standalone-Quick-and-Dirty
-kubectl apply -f secrets.yaml
-kubectl apply -f service.yaml
-kubectl apply -f statefulsets.yaml
-```
-
-#### Test mongodb deployment
-```
-kubectl exec -it mongodb-standalone-0 sh
-mongo mongodb://mongodb-standalone-0.database:27017
-use admin
-db.auth('admin','password')
-db.users.insert({name: 'Patrick'})
-show collections
-db.users.find()
 ```
 
 ### AKS - Create Azure-Standalone-PVC
@@ -86,14 +76,35 @@ kubectl apply -f service.yaml
 kubectl apply -f statefulsets.yaml
 ```
 
-### Test the mongodb and persistent volume is working as expected
-`PreReq:`Use the same steps above to test db access and write a collection.  
+Wait for your deployment to fully start.
+```
+kubectl get pods
+kubectl logs mongodb-standalone-0
+```
 
-This time we will destroy the db, recreate, and see if the data persists.
+#### Test mongodb deployment
+1. Connect to the pod
+2. Connect to the database
+3. Login with static admin credentials
+4. Create new collection of users with your name
+5. Verify your collection data
+
+```
+kubectl exec -it mongodb-standalone-0 sh
+mongo mongodb://mongodb-standalone-0.database:27017
+use admin
+db.auth('admin','password')
+db.users.insert({name: 'Patrick'})
+show collections
+db.users.find()
+``` 
+
+Now lets see if the PVC is working.  We will destroy the db, recreate it, and see if the data persists.
 
 ```
 kubectl delete statefulsets mongodb-standalone
 kubectl apply -f statefulsets.yaml
+
 kubectl exec -it mongodb-standalone-0 sh
 mongo mongodb://mongodb-standalone-0.database:27017
 use admin
