@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb-standalone-kmip
+spec:
+  serviceName: database
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+        selector: mongodb-standalone
+    spec:
+      containers:
+      - name: mongodb-standalone
+        #image: mongo:4.0.8
+        image: ppresto/mongo-ent:4.2
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: admin
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: password
+        command:
+          #- "mongod --auth --bind_ip_all --enableEncryption --kmipServerName vault-0 --kmipPort 5696 --kmipServerCAFile /etc/mongo/certs/ca.pem --kmipClientCertificateFile /etc/mongo/certs/client.pem"
+          - mongod 
+          - "--auth"
+          - "--bind_ip_all"
+          - "--enableEncryption"
+          - "--kmipServerName"
+          - "vault" 
+          - "--kmipPort"
+          - "5696"
+          - "--kmipServerCAFile" 
+          - "/etc/mongo/certs/ca.pem"
+          - "--kmipClientCertificateFile" 
+          - "/etc/mongo/certs/client.pem"
+        volumeMounts:
+        - name: mongodb-conf
+          mountPath: /config
+          readOnly: true
+        - name: mongodb-cert
+          mountPath: /etc/mongo/certs
+          readOnly: true
+        - name: mongodb-data
+          mountPath: /data/db
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+      - name: mongodb-conf
+        configMap:
+          name: mongodb-standalone
+          items:
+          - key: mongo.conf
+            path: mongo.conf
+      - name: mongodb-cert
+        configMap:
+          name: mongodb-standalone
+          items:
+          - key: ca.pem
+            path: ca.pem
+          - key: client.pem
+            path: client.pem
+      - name: mongodb-data
+        persistentVolumeClaim:
+          claimName: pvc-mongodb-standalone
