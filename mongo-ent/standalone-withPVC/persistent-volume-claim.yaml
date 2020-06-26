@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-mongodb-standalone
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: sc-mongodb-standalone
+  resources:
+    requests:
+      storage: 5Gi

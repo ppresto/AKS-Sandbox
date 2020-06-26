@@ -30,13 +30,13 @@ spec:
           - "--bind_ip_all"
           - "--enableEncryption"
           - "--kmipServerName"
-          - "vault" 
+          - "vault-kmip" 
           - "--kmipPort"
           - "5696"
           - "--kmipServerCAFile" 
-          - "/etc/mongo/certs/ca.pem"
+          - "/etc/mongo/certs/vault-ca-kmip.pem"
           - "--kmipClientCertificateFile" 
-          - "/etc/mongo/certs/client.pem"
+          - "/etc/mongo/certs/vault-cert-tenant-1.pem"
         volumeMounts:
         - name: mongodb-conf
           mountPath: /config
@@ -57,12 +57,12 @@ spec:
             path: mongo.conf
       - name: mongodb-cert
         configMap:
-          name: mongodb-standalone
+          name: vault-certs-for-kmip
           items:
-          - key: ca.pem
-            path: ca.pem
-          - key: client.pem
-            path: client.pem
+          - key: vault-ca-kmip.pem
+            path: vault-ca-kmip.pem
+          - key: vault-cert-tenant-1.pem
+            path: vault-cert-tenant-1.pem
       - name: mongodb-data
         persistentVolumeClaim:
           claimName: pvc-mongodb-standalone
