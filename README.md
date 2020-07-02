@@ -1,4 +1,6 @@
 # k8s-azure
+Create AKS cluster
+Create Azure Key Vault Key
 
 ## Pre Req
 * Azure Subscription 

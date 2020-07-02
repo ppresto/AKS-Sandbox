@@ -2,6 +2,9 @@
 #  features {}
 #}
 
+data "azurerm_client_config" "current" {
+}
+
 resource "azurerm_resource_group" "aks" {
   name     = "${var.prefix}-${var.MY_RG}"
   location = var.location
@@ -69,7 +72,7 @@ resource "azurerm_kubernetes_cluster" "example" {
 
 
   service_principal {
-    client_id     = var.ARM_CLIENT_ID
+    client_id     = data.azurerm_client_config.current.client_id
     client_secret = var.ARM_CLIENT_SECRET
   }
 

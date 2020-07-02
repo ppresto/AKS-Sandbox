@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-kmip
+  namespace: default
+spec:
+  ports:
+  - name: kmip
+    port: 5696
+    protocol: TCP
+    targetPort: 5696
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/name: vault
+    component: server
+  sessionAffinity: None
+  type: ClusterIP

@@ -13,3 +13,11 @@ output "client_certificate" {
 output "kube_config" {
   value = azurerm_kubernetes_cluster.example.kube_config_raw
 }
+
+output "key_vault_name" {
+  value = "${azurerm_key_vault.vault.name}"
+}
+
+output "key_vault_key_name" {
+  value = "${azurerm_key_vault_key.generated.name}"
+}

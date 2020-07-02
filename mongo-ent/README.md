@@ -41,7 +41,7 @@ docker push ppresto/mongo-ent:4.2
 ```
 
 ## AKS - Create Standalone Mongo DB (with PVC)
-Go to standalone-withPVC directory to review AKS resources:
+Go to standalone-withPVC directory to review AKS resources
 ```
 cd standalone-withPVC
 ```
@@ -64,8 +64,8 @@ You should see your token or a reference to it.  To create a docker repo secret 
 cat ~/.docker/config.json | base64
 ```
 
-### AKS - Create Azure-Standalone-PVC
-Configure a custom storageclass and create a PVC using it.  then deploy a statefulset leveraging this PVC in Azure.
+### AKS - Create Mongo Standalone-withPVC
+Configure a custom storageclass and create a PVC using it.  then deploy a statefulset leveraging this PVC in AKS.
 
 ```
 kubectl apply -f storageclass.yaml

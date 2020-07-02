@@ -1,46 +1,4 @@
-# mongodb Enterprise
-Build the Enterprise mongodb container based on the mongo docker repo.  This will support KMIP.  Deploy it to Kubernetes using a Persistent Volume Claim (PVC).  Enable KMIP in your vault cluster and configure the mongodb pods to use KMIP.
-
-## Build MongoDB Enterprise container 
-We will build an enterprise image using the mongo docker project.  
-
-PreReq:
-* Sign up for your own free docker account.
-* Create your AKS cluster
-
-## Download mongo docker repo and build image
-When you build your image use your docker login (ex: ppresto).  This will be required when you try to upload your image.
-```
-git clone https://github.com/docker-library/mongo.git
-cd mongo/<version>
-
-docker build -t ppresto/mongo-ent:4.2 --build-arg MONGO_PACKAGE=mongodb-enterprise --build-arg MONGO_REPO=repo.mongodb.com .
-```
-
-## Test the mongo db locally
-```
-docker run -d --name mongo -t ppresto/mongo-ent:4.2
-docker exec -it mongo bash
-ps -aux | grep mongod
-mongo  #can shell connect and show enterprise prompt?
-exit
-exit
-```
-
-## View logs
-```
-docker logs mongo | grep enterprise
-```
-
-## Push imge to docker repo
-Be sure your image name starts with your docker login name (ex: ppresto)
-```
-docker login
-docker images
-docker push ppresto/mongo-ent:4.2
-```
-
-## AKS - Create Standalone Mongo DB (with PVC and KMIP)
+# AKS - Create Standalone Mongo DB (with PVC and KMIP)
 Go to standalone-withPVC directory to review AKS resources:
 ```
 cd standalone-withPVC
@@ -49,25 +7,14 @@ cd standalone-withPVC
 * storageclass.yaml - custom class for mongo
 * secrets.yaml - docker auth to deploy custom mongo-ent image
 * persistent-volume-claim.yaml - mongo storage volume
-* statefulset-kmip.yaml - deploy standalone mongodb instance
+* kmip/statefulset-kmip.yaml - deploy standalone mongodb instance
 * service-vault.yaml - expose the db service so we can connect
-* service-vault-kmip.yaml - expose KMIP port
+* kmip/service-vault-kmip.yaml - expose KMIP port
 
-### Update secrets.yaml with your docker auth secret
-To pull down your docker image you need to allow K8 to login to your docker repo.  To do this locally we are putting a reference to our docker creds into a k8 secret and referencing this in our statefulset.  To create a k8 secret using your docker creds try the following:
-```
-docker login
-cat ~/.docker/config.json
-``` 
-
-You should see your token or a reference to it.  To create a docker repo secret you need to base64 encode the json file config.json and put this value in **./secrets.yaml**
-```
-cat ~/.docker/config.json | base64
-```
 ### Vault - Enable KMIP and generate a certificate for FDE
-
+Review the commands in ../../vault-with-raft/kmip to configure KMIP.  Execute commands manually on CLI.
 ```
-read 1_kmip_setup.sh and execute commands manually on CLI.
+cat ../../vault-with-raft/kmip/kmip_vault_config.sh
 ```
 
 ### AKS - Create Azure-Standalone-PVC
