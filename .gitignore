@@ -4,6 +4,8 @@ terraform.tfstate
 
 # Module directory
 .terraform/
+*/tmp/
+*/archive/
 
 # repos
 mongodb-ent/mongo/
@@ -15,7 +17,6 @@ mongodb-ent/mongo/
 *.pem
 
 # tmp files
-*.json
 *.hclic
 
 .DS_store
