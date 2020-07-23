@@ -10,15 +10,15 @@ resource "kubernetes_secret" "github" {
   type = "kubernetes.io/dockerconfigjson"
 }
 
-resource "kubernetes_secret" "kmip-certs" {
-  metadata {
-    name = "kmip-certs"
-  }
-
-  data = {
-    "vault-ca-kmip.pem"       = var.kmip_ca
-    "vault-cert-tenant-1.pem" = var.kmip_pem
-  }
-
-  type = "Opaque"
-}
+#resource "kubernetes_secret" "kmip-certs" {
+#  metadata {
+#    name = "kmip-certs"
+#  }
+#
+#  data = {
+#    "vault-ca-kmip.pem"       = var.kmip_ca
+#    "vault-cert-tenant-1.pem" = var.kmip_pem
+#  }
+#
+#  type = "Opaque"
+#}

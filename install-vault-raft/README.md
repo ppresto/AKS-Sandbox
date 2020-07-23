@@ -8,14 +8,17 @@ Note:
 Update `vault.auto.tfvars` with your environment information like resource group, and k8s cluster name.
 ```
 cp main-aks-and-vault.tf.example main.tf
+source env.sh
 terraform init
 terraform apply -auto-approve
 ```
 You should have a fully running AKS cluster with Vault deployed and unsealed.  If anything went wrong refer to `./README-manual-steps.md` and walk through the steps manually.
 
-## Setup a Vault Project
-Now we are going to create a project namespace that we can configure all our auth methods, secrets engines, and policies too using terraform.  This will give us a quick way to build/destroy projects at anytime without affecting the root vault.
+## Next Steps...
+Setup a Vault Project
+Now lets create a project or vault namespace that we can configure all our auth methods, secrets engines, and policies too using terraform.  This will give us a quick way to build/destroy various configurations at anytime without affecting the root vault.
+[Setup a Vault Namespace Project](./tree/master/vault-project-template "Setup a Vault Namespace Project")
 
 ```
-cd ./vault_project_template
+cd ../vault_project_template
 ```

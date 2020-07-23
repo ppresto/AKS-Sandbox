@@ -15,7 +15,9 @@ This includes:
 
 ## Build AKS Cluster
 
-Use the root directory to build an AKS Cluster.  If you want to automatically deploy AKS and vault together you can skip this page and look at `./install-vault-raft/main-aks-and-vault.tf.example`
+Use the root directory to build an AKS Cluster.  
+
+Note: If you want to automatically deploy AKS and vault together you can skip this page and go to [Provision AKS and Install Vault with Integrated Storage](./tree/master/install-vault-raft "Provision AKS & Vault")
 
 To deploy AKS update the aks.auto.tfvars file with your information. 
 See a working example: `cat ./aks.auto.tfvars` 
@@ -49,6 +51,9 @@ terraform apply
 ```
 
 ## Connect to AKS
+
+To connect to AKS using the default ~/.kube/config you can run `source env.sh`.  This file is doing the following manual steps.
+
 ```
 MY_RG=$(terraform output resource_group_name)
 MY_CN=$(terraform output azure_aks_cluster_name)

@@ -1,6 +1,6 @@
 # Vault Project Template
 
-Project onboarding automation with HashiCorp Vault Enterprise using Terraform Vault provider.  Create a new vault namespace and approle in the root ns of your existing vault cluster and then automate everything within your new ns using the terraform vault provider and modules found here.
+Project onboarding automation with HashiCorp Vault Enterprise using Terraform Vault provider.  Create a new vault namespace and approle in Vaults root namespace. Then automate everything within your new ns using the terraform vault provider and modules found here.
 
 * Authenticate application running in Kubernetes Pods
 * Authenticate instances running on Google Cloud Platform
@@ -20,9 +20,7 @@ https://github.com/planetrobbie/terraform-vault-onboard
  
 ## Setup
 
-First of all you need to export the following environment variables in your shell environment. But if you're using Terraform Cloud or Enterprise you can easily do so from the UI, just remove `TF_VAR_`. When setting them up in Terraform Cloud or Enterprise, just keep the variable name itself.
-
-So if you're using Terraform Open Source, just export values for the following environment variables, we've kept some default values, feel free to change any of them.
+You will need to export the following environment variables in your shell environment. But if you're using Terraform Cloud or Enterprise you can easily do so from the UI, just remove `TF_VAR_`. 
 
 ### 1. Configure Root Namespace
 
@@ -31,6 +29,7 @@ We want to restrict Projects to a namespace to limit the blast radius. So First 
 * 1 new approle id we will use to manage it.
 
 ```
+cd vault-project-template
 cp template.tf.example <proj_namespace>.tf
 ```
 Edit `<proj_namespace>.tf` and search for "template".  Replace every instance with <proj_namespace> and save.
@@ -53,8 +52,6 @@ This script will attempt to find the vault root token, k8s config, and setup a `
 source env.sh
 terraform init
 terraform apply -auto-approve
-
-pkill kubectl
 ```
 
 If that doesn't work, it might be because you haven't exported `VAULT_ADDR` and `VAULT_TOKEN` environment variable to allow our Terraform Vault provider to authenticate.
@@ -74,13 +71,13 @@ You'll find all the remaining environment variables gathered into `set-project-e
 Modify the `main.tf` to setup your auth methods, engines, and policies as needed.  Once you have your vault configuration all in terraform go ahead and apply it to your new namespace.
 
 ```
-cd ../
+source set-project-env.sh
 terraform init
 terraform apply -auto-approve
 ```
 You should have a namespace setup with k/v,  some policies, and /auth/k8s.
 
-In my example project I had to setup KMIP too.  The vault provider doesn't support KMIP as of this project so Im using local-exec and bash.  This script should be able to run from terrafrom and independently if needed.
+In my example project I had to setup KMIP too.  The vault provider has limitted KMIP support as of this project so Im using local-exec and bash to use the vault API.  This script should be able to run from terrafrom and independently if needed. `scripts/setup_kmip`
 
 ### Variable Reference:
 
@@ -220,6 +217,8 @@ The Vault k8s role definition should match both service account and namespace, v
      vault read -namespace=<VAULT_NAMESPACE>  auth/<k8s_auth_mount_point>/role/<ROLE>
 
 ### Commands
+New Tool for K8s Administration.
+[K9s](https://github.com/derailed/k9s/releases "K9s")
 
 Troubleshooting vault secrets injection
 ```
