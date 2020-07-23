@@ -45,5 +45,17 @@ docker images
 docker push ppresto/mongo-ent:4.2
 ```
 
-### Next Stes
-Now that you have an image built you can deploy it to your AKS cluster.  Go to one of the following 3 child directories to deploy your image using the quickstart that has no persistant storage, the standalone instance with PVC, or for a more advanced setup use Vault Enterprises KMIP support for FDE.  
+## Next Stes
+Now that you have an image built, deploy it to your AKS cluster.  Go to one of the following 3 child directories to deploy your image.
+* yaml-noPVC - use kubectl apply -f to deploy this service.
+* yaml-PVC - use kubectl apply -f to deploy this service.
+* yaml-PVC-withKMIP - use kubectl apply -f to deploy this service.
+
+**Lifecycle Management with terraform**
+If you want to manage your service configuration over time and always know exactly what state your K8s cluster is in then using the terraform kubernetes provider is an excellent way to do this.  It will deploy your services and manage the state over time so you can easily recover from any point in time.  Use this to deploy your mongodb service with kmip support.
+* tf-PVC-withKMIP - use terraform (init, plan, apply)
+```
+cd tf-PVC-withKMIP/
+terraform init
+terraform apply -auto-approve
+```
