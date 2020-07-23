@@ -7,6 +7,15 @@ Note:
 ## Provisioning
 Update `vault.auto.tfvars` with your environment information like resource group, and k8s cluster name.
 
+### Prereq
+Export azure environment variables
+```
+ARM_SUBSCRIPTION_ID
+ARM_CLIENT_SECRET
+ARM_TENANT_ID
+ARM_CLIENT_ID
+```
+
 ### Provision both AKS and Vault
 ```
 cp ex-aks-vault-init-full.tf.disable main.tf
