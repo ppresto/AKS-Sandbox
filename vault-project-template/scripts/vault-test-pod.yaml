@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vault-test-pod
+  namespace: default
+  labels:
+    app: web
+spec:
+  serviceAccountName: mongodb
+  automountServiceAccountToken: true
+  containers:
+    - name: test-pod
+      #image: vault:latest
+      image: praqma/network-multitool
+      env:
+      - name: VAULT_ADDR
+        value: http://vault.default.svc:8200
+      - name: VAULT_NAMESPACE
+        value: apttus
+      - name: VAULT_ROLE
+        value: mongodb
+  restartPolicy: Never

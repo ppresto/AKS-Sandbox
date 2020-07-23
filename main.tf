@@ -1,11 +1,11 @@
 module "aks" {
   source = "./modules/aks"
-  prefix="ppresto"
-  MY_RG="aks-rg"
-  k8s_clustername="example-aks1"
-  location = "West US 2"
-  ssh_user = "patrickpresto"
-  public_ssh_key_path = "~/.ssh/id_rsa.pub"
+  prefix= var.PREFIX
+  MY_RG= var.MY_RG
+  k8s_clustername= var.K8S_CLUSTERNAME
+  location = var.LOCATION
+  ssh_user = var.SSH_USER
+  public_ssh_key_path = var.SSH_USER_PUB_KEY_PATH
   ARM_CLIENT_ID=var.ARM_CLIENT_ID
   ARM_CLIENT_SECRET=var.ARM_CLIENT_SECRET
   ARM_SUBSCRIPTION_ID=var.ARM_SUBSCRIPTION_ID
@@ -15,6 +15,11 @@ module "aks" {
           owner = "ppresto"
       }
 }
+
+output "aks-fqdn" {
+  value = module.aks.fqdn
+}
+
 output "azure_aks_cluster_name" {
   value = module.aks.azurerm_kubernetes_cluster_name
 }

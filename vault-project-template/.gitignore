@@ -1,0 +1,22 @@
+# Compiled files
+terraform.tfstate
+*tfstate*
+
+# Module directory
+.terraform/
+*/tmp/
+*/archive/
+
+# repos
+mongodb-ent/mongo/
+
+# Terraform Variables
+#*.tfvars
+
+# SSH Keys
+*.pem
+
+# tmp files
+*.hclic
+
+.DS_store

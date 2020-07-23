@@ -1,6 +1,0 @@
-module "vault-raft" {
-  source = "../modules/vault-raft"
-  vault_name = "ppresto-vault-62d8c34b"
-  key_name = "ppresto-aks-rg-key"
-  ARM_CLIENT_SECRET=var.ARM_CLIENT_SECRET
-}

@@ -1,0 +1,8 @@
+module "files" {
+  source  = "matti/resource/shell"
+  command = "cat ${path.module}/tmp/filename | jq -r .keyname"
+}
+
+output "keyname-value" {
+  value = module.files.stdout
+}

@@ -1,0 +1,35 @@
+#
+### Update azure key vault name and key name your env info
+#
+module "vault-raft" {
+  source = "../modules/vault-raft"
+  vault_name = "ppresto-vault-90f1b0d3"
+  key_name = "ppresto-aks-1-rg-key"
+  ARM_CLIENT_SECRET=var.ARM_CLIENT_SECRET
+}
+
+variable "config_path" {
+  description = "path to a kubernetes config file"
+  default = "tmp/k8s_config"
+}
+
+resource "null_resource" "init-vault" {
+  triggers = {
+    config_contents = filemd5("${path.module}/scripts/init_vault.sh")
+  }
+  depends_on = [module.vault-raft]
+
+  provisioner "local-exec" {
+    command = "${path.module}/scripts/setEnvK8s.sh ${path.module}/${var.config_path}; ${path.module}/scripts/init_vault.sh ${path.module}/${var.config_path}"
+  }
+}
+
+output "helm-status" {
+  value = module.vault-raft.status
+}
+output "helm-name" {
+  value = module.vault-raft.name
+}
+output "helm-version" {
+  value = module.vault-raft.version
+}

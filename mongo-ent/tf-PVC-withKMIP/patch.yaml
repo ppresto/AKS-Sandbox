@@ -1,0 +1,19 @@
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-status: "update"
+        vault.hashicorp.com/namespace: "apttus"
+        vault.hashicorp.com/auth-path: "auth/k8s"
+        vault.hashicorp.com/agent-inject-secret-database-ca.pem: "kv/data/database/certs/ca"
+        vault.hashicorp.com/agent-inject-secret-database-client.pem: "kv/data/database/certs/client"
+        vault.hashicorp.com/agent-inject-secret-database-config.txt: "kv/data/database/config"
+        vault.hashicorp.com/agent-inject-template-database-ca.pem: |
+          {{ with secret "kv/data/database/certs/ca" }}
+            {{ range $k, $v := .Data.data }}
+                {{ $v }}
+            {{ end }}
+          {{ end }}
+        vault.hashicorp.com/role: "mongodb"

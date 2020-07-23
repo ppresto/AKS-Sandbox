@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-inject
+  namespace: default
+  labels:
+    app: web
+  annotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/agent-inject-status: "update"
+    vault.hashicorp.com/namespace: "apttus"
+    vault.hashicorp.com/auth-path: "auth/k8s"
+    vault.hashicorp.com/agent-inject-secret-database-ca.pem: "kv/data/database/certs/ca"
+    vault.hashicorp.com/agent-inject-secret-database-client.pem: "kv/data/database/certs/client"
+    vault.hashicorp.com/agent-inject-secret-database-config.txt: "kv/data/database/config"
+    vault.hashicorp.com/agent-inject-template-database-ca.pem: |
+      {{ with secret "kv/data/database/certs/ca" }}
+        {{ range $k, $v := .Data.data }}
+            {{ $v }}
+        {{ end }}
+      {{ end }}
+    vault.hashicorp.com/role: "mongodb"
+spec:
+  serviceAccountName: mongodb
+  automountServiceAccountToken: true
+  containers:
+    - name: test-inject
+      #image: vault:latest
+      image: praqma/network-multitool
+      env:
+      - name: VAULT_ADDR
+        value: http://vault.default.svc:8200
+      - name: VAULT_NAMESPACE
+        value: apttus
+      - name: VAULT_ROLE
+        value: mongodb
+  restartPolicy: Never

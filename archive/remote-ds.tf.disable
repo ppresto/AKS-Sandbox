@@ -1,7 +1,0 @@
-data "terraform_remote_state" "azure_ama_hcs" {
-  backend = "atlas"
-  config  = {
-    address = "https://app.terraform.io"
-    name    = "${var.organization}/azure_ama_hcs"
-  }
-}
