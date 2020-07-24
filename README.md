@@ -17,7 +17,7 @@ This includes:
 
 Use the root directory to build an AKS Cluster.  
 
-Note: If you want to automatically deploy AKS and vault together you can skip this page and go to [Provision AKS and Install Vault with Integrated Storage](./tree/master/install-vault-raft "Provision AKS & Vault")
+Note: If you want to automatically deploy AKS and vault together you can skip this page and go to [Provision AKS and Install Vault with Integrated Storage](./install-vault-raft "Provision AKS & Vault")
 
 To deploy AKS update the aks.auto.tfvars file with your information. 
 See a working example: `cat ./aks.auto.tfvars` 
