@@ -42,7 +42,7 @@ terraform apply -auto-approve
 ## Next Steps...
 ### Setup a Vault Project
 Now lets create a project or vault namespace that we can configure all our auth methods, secrets engines, and policies too using terraform.  This will give us a quick way to build/destroy various configurations at anytime without affecting the root vault.
-[Setup a Vault Namespace Project](./vault-project-template "Setup a Vault Namespace Project")
+[Setup a Vault Namespace Project](../vault-project-template "Setup a Vault Namespace Project")
 
 ```
 cd ../vault_project_template
