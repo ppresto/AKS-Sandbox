@@ -1,5 +1,5 @@
 #!/bin/bash
-VAULT_NAMESPACE="apttus"
+VAULT_NAMESPACE="mongo"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 vaultInstallDir="../../install-vault-raft"
