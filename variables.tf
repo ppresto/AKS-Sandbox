@@ -10,3 +10,5 @@ variable MY_RG {}
 variable K8S_CLUSTERNAME {}
 variable SSH_USER {}
 variable SSH_USER_PUB_KEY_PATH {}
+
+variable aks_node_count {default = "3"}

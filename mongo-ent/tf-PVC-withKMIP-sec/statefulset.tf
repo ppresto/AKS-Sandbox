@@ -37,7 +37,7 @@ resource "kubernetes_stateful_set" "mongodb-standalone-kmip" {
         annotations = {
           "vault.hashicorp.com/agent-inject"                              = "true"
           "vault.hashicorp.com/role"                                      = var.sa_name
-          "vault.hashicorp.com/namespace"                                 = "mongo"
+          "vault.hashicorp.com/namespace"                                 = "mongo-sec"
           "vault.hashicorp.com/auth-path"                                 = "auth/k8s"
           "vault.hashicorp.com/ca-cert"                                   = "/run/secrets/kubernetes.io/serviceaccount/ca.crt"
           "vault.hashicorp.com/agent-inject-secret-database-ca.pem"       = "kv/data/database/certs/ca"

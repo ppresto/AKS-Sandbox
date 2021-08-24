@@ -4,6 +4,9 @@ variable ARM_CLIENT_SECRET {}
 variable ARM_SUBSCRIPTION_ID {} 
 variable ARM_TENANT_ID {}
 variable MY_RG {}
+variable aks_node_count {
+    default = "3"
+}
 variable k8s_clustername {
     description = "name of k8s cluster.  Must use DNS compliant characters"
     default = "example-aks1"

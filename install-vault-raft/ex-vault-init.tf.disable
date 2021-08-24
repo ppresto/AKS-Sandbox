@@ -3,9 +3,13 @@
 #
 module "vault-raft" {
   source = "../modules/vault-raft"
-  vault_name = "ppresto-vault-90f1b0d3"
-  key_name = "ppresto-aks-1-rg-key"
+  k8s_namespace = var.k8s_namespace
+  aks_fqdn = var.aks.fqdn
+  vault_name = var.vault_name
+  key_name = var.key_name
   ARM_CLIENT_SECRET=var.ARM_CLIENT_SECRET
+  vault-config-type = var.vault-config-type
+
 }
 
 variable "config_path" {
@@ -24,6 +28,9 @@ resource "null_resource" "init-vault" {
   }
 }
 
+output "K8s_namespace" {
+  value = module.vault-raft.K8s_namespace
+}
 output "helm-status" {
   value = module.vault-raft.status
 }
@@ -33,3 +40,7 @@ output "helm-name" {
 output "helm-version" {
   value = module.vault-raft.version
 }
+output "vault-addr" {
+  value = "${var.vault-config-type}://127.0.0.1:8200"
+}
+

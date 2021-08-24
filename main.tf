@@ -2,6 +2,7 @@ module "aks" {
   source = "./modules/aks"
   prefix= var.PREFIX
   MY_RG= var.MY_RG
+  aks_node_count = var.aks_node_count
   k8s_clustername= var.K8S_CLUSTERNAME
   location = var.LOCATION
   ssh_user = var.SSH_USER

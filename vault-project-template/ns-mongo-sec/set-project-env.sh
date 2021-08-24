@@ -1,5 +1,5 @@
 #!/bin/bash
-VAULT_NAMESPACE="mongo"
+VAULT_NAMESPACE="mongo-sec"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 vaultInstallDir="../../install-vault-raft"
@@ -91,7 +91,7 @@ EOF
   else
       echo "kubectl port-forward already running"
   fi
-  
+
 else
   echo "Error: No role_id_${VAULT_NAMESPACE} Found"
   echo "Please run terraform in the parent directory 'cd ../' to properly generate the namespace and approle"

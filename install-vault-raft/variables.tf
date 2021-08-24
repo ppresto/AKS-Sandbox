@@ -9,5 +9,20 @@ variable LOCATION {
 variable PREFIX {}
 variable MY_RG {}
 variable K8S_CLUSTERNAME {}
+variable aks_fqdn {}
 variable SSH_USER {}
 variable SSH_USER_PUB_KEY_PATH {}
+variable vault_name {
+    description = "Azure KeyVault Name for auto unseal"
+}
+variable key_name {
+    description = "Azure Key in KeyVault to be used for auto unseal"
+}
+
+variable k8s_namespace {default = "vault"}
+variable aks_node_count {default = "3"}
+
+variable vault-config-type {
+    description = "default, or tls"
+    default = "default"
+}

@@ -2,6 +2,7 @@ module "aks" {
   source = "../modules/aks"
   prefix= var.PREFIX
   MY_RG= var.MY_RG
+  aks_node_count = var.aks_node_count
   k8s_clustername= var.K8S_CLUSTERNAME
   location = var.LOCATION
   ssh_user = var.SSH_USER
@@ -18,6 +19,7 @@ module "aks" {
 
 module "vault-raft" {
   source = "../modules/vault-raft"
+  k8s_namespace = var.k8s_namespace
   k8sloadconfig = "false"
   aks_fqdn = module.aks.fqdn
   aks_ca = module.aks.cluster_ca_certificate
@@ -26,6 +28,7 @@ module "vault-raft" {
   vault_name = module.aks.key_vault_name
   key_name = module.aks.key_vault_key_name
   ARM_CLIENT_SECRET=var.ARM_CLIENT_SECRET
+  vault-config-type = var.vault-config-type
 }
 
 variable "config_path" {
@@ -72,4 +75,10 @@ output "helm-name" {
 }
 output "helm-version" {
   value = module.vault-raft.version
+}
+output "K8s_namespace" {
+  value = module.vault-raft.K8s_namespace
+}
+output "vault-addr" {
+  value = "${var.vault-config-type}://127.0.0.1:8200"
 }

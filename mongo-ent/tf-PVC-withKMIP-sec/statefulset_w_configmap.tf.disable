@@ -37,27 +37,9 @@ resource "kubernetes_stateful_set" "mongodb-standalone-kmip" {
         annotations = {
           "vault.hashicorp.com/agent-inject"                              = "true"
           "vault.hashicorp.com/role"                                      = var.sa_name
-          "vault.hashicorp.com/namespace"                                 = "mongo"
+          "vault.hashicorp.com/namespace"                                 = "apttus/"
           "vault.hashicorp.com/auth-path"                                 = "auth/k8s"
-          "vault.hashicorp.com/ca-cert"                                   = "/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-          "vault.hashicorp.com/agent-inject-secret-database-ca.pem"       = "kv/data/database/certs/ca"
-          "vault.hashicorp.com/agent-inject-secret-database-client.pem"   = "kv/data/database/certs/client"
           "vault.hashicorp.com/agent-inject-secret-database-config.txt"   = "kv/data/database/config"
-          "vault.hashicorp.com/agent-inject-template-database-ca.pem"     = <<-EOF
-          {{- with secret "kv/data/database/certs/ca" -}}
-            {{- range $k, $v := .Data.data -}}
-                {{- $v -}}
-            {{- end -}}
-          {{- end -}}
-          EOF
-          "vault.hashicorp.com/agent-inject-template-database-client.pem" = <<-EOF
-          {{- with secret "kv/data/database/certs/client" -}}
-            {{- range $k, $v := .Data.data -}}
-                {{- $v -}}
-            {{- end -}}
-          {{- end -}}
-          EOF
-          #"vault.hashicorp.com/agent-inject-template-database-config.txt" = "|\n{{- with secret "/database/config" -}}\n{{ .Data.username }}:{{ .Data.password }}@mongodb://mongodb-standalone-0.database:27017\n{{- end }}"
         }
       }
       spec {
@@ -87,20 +69,19 @@ resource "kubernetes_stateful_set" "mongodb-standalone-kmip" {
             "--kmipPort",
             "5696",
             "--kmipServerCAFile",
-            "/vault/secrets/database-ca.pem",
+            "/etc/mongo/certs/vault-ca-kmip.pem",
             "--kmipClientCertificateFile",
-            "/vault/secrets/database-client.pem"
+            "/etc/mongo/certs/vault-cert-tenant-1.pem"
           ]
-            # Use with configmap if Vault k/v isn't available.  
-            # configmap: ../../vault-project-template/scripts/setup_kmip.sh
-            
-            #"--kmipServerCAFile",
-            #"/etc/mongo/certs/vault-ca-kmip.pem",
-            #"--kmipClientCertificateFile",
-            #"/etc/mongo/certs/vault-cert-tenant-1.pem"
+
           volume_mount {
             name       = "mongodb-conf"
             mount_path = "/config"
+            read_only  = true
+          }
+          volume_mount {
+            name       = "mongodb-cert"
+            mount_path = "/etc/mongo/certs"
             read_only  = true
           }
           volume_mount {
@@ -131,6 +112,20 @@ resource "kubernetes_stateful_set" "mongodb-standalone-kmip" {
             items {
               key  = "mongo.conf"
               path = "mongo.conf"
+            }
+          }
+        }
+        volume {
+          name = "mongodb-cert"
+          config_map {
+            name = "vault-certs-for-kmip"
+            items {
+              key  = "vault-ca-kmip.pem"
+              path = "vault-ca-kmip.pem"
+            }
+            items {
+              key  = "vault-cert-tenant-1.pem"
+              path = "vault-cert-tenant-1.pem"
             }
           }
         }

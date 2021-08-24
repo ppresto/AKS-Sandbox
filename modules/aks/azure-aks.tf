@@ -56,11 +56,12 @@ resource "azurerm_kubernetes_cluster" "example" {
 
   default_node_pool {
     name            = "agentpool"
-    #count           = "2"
     vm_size         = "Standard_DS2_v2"
-    #os_type         = "Linux"
     os_disk_size_gb = 30
-    node_count      = 3
+    node_count      = var.aks_node_count
+    #enable_auto_scaling = true
+    #max_count       = 5
+    #min_count       = 3
 
 
     # Required for advanced networking

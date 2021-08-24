@@ -1,5 +1,6 @@
 PREFIX="ppresto"
 MY_RG="aks-1-rg"
+aks_node_count = "5"
 K8S_CLUSTERNAME="aks-1"
 LOCATION = "West US 2"
 SSH_USER = "patrickpresto"

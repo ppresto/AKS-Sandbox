@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    vault.hashicorp.com/agent-inject: "false"
+    vault.hashicorp.com/agent-inject-secret-database-ca.pem: kv/data/database/certs/ca
+    vault.hashicorp.com/agent-inject-secret-database-client.pem: kv/data/database/certs/client
+    vault.hashicorp.com/agent-inject-secret-database-config.txt: kv/data/database/config
+    vault.hashicorp.com/agent-inject-status: injected
+    vault.hashicorp.com/agent-inject-template-database-ca.pem: |
+      {{- with secret "kv/data/database/certs/ca" -}}
+        {{- range $k, $v := .Data.data -}}
+            {{- $v -}}
+        {{- end -}}
+      {{- end -}}
+    vault.hashicorp.com/agent-inject-template-database-client.pem: |
+      {{- with secret "kv/data/database/certs/client" -}}
+        {{- range $k, $v := .Data.data -}}
+            {{- $v -}}
+        {{- end -}}
+      {{- end -}}
+    vault.hashicorp.com/auth-path: auth/k8s
+    vault.hashicorp.com/ca-cert: /run/secrets/kubernetes.io/serviceaccount/ca.crt
+    vault.hashicorp.com/namespace: mongo-sec
+    vault.hashicorp.com/role: mongodb
+  name: test-pod-mongo
+  namespace: default
+spec:
+  automountServiceAccountToken: true
+  containers:
+    - name: test-container-mongo
+      image: praqma/network-multitool
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: MONGO_INITDB_ROOT_USERNAME
+        value: admin
+      - name: MONGO_INITDB_ROOT_PASSWORD
+        value: password
+      
+      volumeMounts:
+      - mountPath: /vault/secrets
+        name: vault-secrets
+
+  serviceAccount: mongodb
+  serviceAccountName: mongodb
+  volumes:
+  - configMap:
+      defaultMode: 420
+      items:
+      - key: mongo.conf
+        path: mongo.conf
+      name: mongodb-standalone
+      optional: false
+    name: vault-secrets

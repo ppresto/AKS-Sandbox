@@ -1,8 +1,11 @@
 module "vault-raft" {
   source = "../modules/vault-raft"
+  k8s_namespace = var.k8s_namespace
+  aks_fqdn = var.aks.fqdn
   vault_name = "ppresto-vault-62d8c34b"
   key_name = "ppresto-aks-rg-key"
   ARM_CLIENT_SECRET=var.ARM_CLIENT_SECRET
+  vault-config-type = var.vault-config-type
 }
 
 output "helm-status" {
@@ -13,4 +16,10 @@ output "helm-name" {
 }
 output "helm-version" {
   value = module.vault-raft.version
+}
+output "K8s_namespace" {
+  value = module.vault-raft.K8s_namespace
+}
+output "vault-addr" {
+  value = "${var.vault-config-type}://127.0.0.1:8200"
 }

@@ -10,3 +10,6 @@ output "version" {
 output "values" {
   value = helm_release.vault.values
 }
+output "K8s_namespace" {
+  value = var.k8s_namespace
+}

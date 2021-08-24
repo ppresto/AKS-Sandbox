@@ -9,11 +9,11 @@ fi
 
 export KUBECONFIG=${DIR}/${vaultInstallDir}/tmp/k8s_config
 #export KUBECONFIG=/Users/patrickpresto/Projects/AKS-Sandbox/install-vault/scripts/../tmp/k8s_config
-export VAULT_ADDR="http://127.0.0.1:8200"
+export VAULT_ADDR=$(terraform output -state=${vaultInstallDir}/terraform.tfstate vault-addr)
 export VAULT_TOKEN=$(cat ${DIR}/${vaultInstallDir}/tmp/cluster-keys.json| jq -r ".root_token")
 export TF_VAR_VAULT_ADDR=${VAULT_ADDR}
 export TF_VAR_VAULT_TOKEN=${VAULT_ROOT_TOKEN}
-
+export VAULT_SKIP_VERIFY=true
 # Setup kubectl port forward to access vault with localhost
 
 if [[ ! $(ps -ef | grep "kubectl port-forward" | grep -v grep) ]]; then
@@ -35,17 +35,17 @@ fi
 
 echo "Retrieve the CA and save to ca.pem"
 if [[ -z ${VAULT_NAMESPACE} ]]; then
-    curl -s\
+    curl -s -k\
         --header "X-Vault-Token: ${VAULT_TOKEN}" \
         --request GET \
-        http://127.0.0.1:8200/v1/kmip/ca \
+        ${VAULT_ADDR}/v1/kmip/ca \
         | jq -r ".data.ca_pem" > ${DIR}/${vaultInstallDir}/tmp/vault-ca-kmip.pem
 else
-    curl -s\
+    curl -s -k\
         --header "X-Vault-Token: ${VAULT_TOKEN}" \
         --header "X-Vault-Namespace: ${VAULT_NAMESPACE}" \
         --request GET \
-        http://127.0.0.1:8200/v1/kmip/ca \
+        ${VAULT_ADDR}/v1/kmip/ca \
         | jq -r ".data.ca_pem" > ${DIR}/${vaultInstallDir}/tmp/vault-ca-kmip.pem
         #| awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' > ${DIR}/${vaultInstallDir}/tmp/vault-ca-kmip.pem
         # ^^ awk syntax replaces newlines with \n for proper formatting
@@ -63,7 +63,6 @@ fi
 echo "Generate the certificate for tenant_1 and save as vault_cert_tenant_1.pem"
 vault write -format=json kmip/scope/tenant_1/role/admin/credential/generate format=pem_bundle \
     | jq -r .data.certificate > ${DIR}/${vaultInstallDir}/tmp/vault-cert-tenant-1.pem
-    #| awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' > ${DIR}/${vaultInstallDir}/tmp/vault-cert-tenant-1.pem
 
 if [[ ! $(vault kv get -format="json" kv/database/config | jq -r '.data.vault-ca-kmip') ]]; then
     echo "Add KMIP CA and Client Certs to Vault KV"
@@ -72,8 +71,3 @@ if [[ ! $(vault kv get -format="json" kv/database/config | jq -r '.data.vault-ca
 else
     echo "Found: KMIP Certs already in Vault"
 fi
-
-# Configmap isn't secure.  Can be used as example if Vault isn't available.
-#echo "Create a configmap with the ca and the tenant_1 cert our pod will use"
-#kubectl delete configmap vault-certs-for-kmip
-#kubectl create configmap vault-certs-for-kmip --from-file=${DIR}/${vaultInstallDir}/tmp/vault-cert-tenant-1.pem --from-file=${DIR}/${vaultInstallDir}/tmp/vault-ca-kmip.pem

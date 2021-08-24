@@ -21,17 +21,17 @@ MY_RG=$(terraform output -state=${tfstate} resource_group_name)
 MY_CN=$(terraform output -state=${tfstate} azure_aks_cluster_name)
 
 # you can pass the full path for the k8s_config.  For example: "./tmp/k8s_config"
-if [[ ! -f ${DIR}/$config ]]; then
-    if [[ ! -d ${DIR}/${config%/*} ]]; then 
-        mkdir -p  ${DIR}/${config%/*}}
+if [[ ! -f $config ]]; then
+    if [[ ! -d ${config%/*} ]]; then 
+        mkdir -p  ${config%/*}
     fi
     echo "az aks get-credentials --resource-group ${MY_RG} --name ${MY_CN} --overwrite-existing --file $config"
     az aks get-credentials --resource-group ${MY_RG} --name ${MY_CN} --overwrite-existing --file $config
-    export KUBECONFIG=${DIR}/${config}
+    export KUBECONFIG=${config}
 else
     echo "Authentication Setup"
-    echo "export KUBECONFIG=${DIR}/${config}"
-    export KUBECONFIG=${DIR}/${config}
+    echo "export KUBECONFIG=${config}"
+    export KUBECONFIG=${config}
     #echo "az aks get-credentials --resource-group ${MY_RG} --name ${MY_CN} --overwrite-existing"
     #az aks get-credentials --resource-group ${MY_RG} --name ${MY_CN} --overwrite-existing
 fi
